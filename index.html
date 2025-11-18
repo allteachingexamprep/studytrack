@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tracker - EMRS & KVS Exams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4fc3f7;
+            --primary-dark: #03a9f4;
+            --primary-light: #b3e5fc;
+            --secondary: #ff9800;
+            --accent: #e91e63;
+            --text-dark: #37474f;
+            --text-light: #78909c;
+            --bg-light: #f5fdff;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f5fdff 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        .designer-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .exam-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .exam-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .exam-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .days-left {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .countdown-item {
+            text-align: center;
+        }
+
+        .countdown-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .progress-section {
+            margin: 25px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: var(--primary-light);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .timer-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .study-mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--primary-light);
+            color: var(--text-dark);
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: var(--primary);
+            color: white;
+        }
+
+        .subject-selector {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--primary-light);
+            font-size: 1rem;
+            color: var(--text-dark);
+            background: var(--white);
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #c2185b;
+            transform: translateY(-2px);
+        }
+
+        .session-info {
+            background: var(--primary-light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .session-info i {
+            color: var(--primary-dark);
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .subject-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .subject-name {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .subject-hours {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .subject-progress {
+            margin-bottom: 15px;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .mode-progress {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .mode-progress-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--bg-light);
+        }
+
+        .mode-progress-item.reading {
+            border-left: 4px solid #4fc3f7;
+        }
+
+        .mode-progress-item.revision {
+            border-left: 4px solid #ff9800;
+        }
+
+        .mode-progress-item.practice {
+            border-left: 4px solid #e91e63;
+        }
+
+        .notification-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .notification-header i {
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        .notification-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--primary-light);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .designer {
+            color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .countdown-value {
+                font-size: 1.4rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+            }
+            
+            .study-mode-selector {
+                flex-direction: column;
+            }
+            
+            .designer-badge {
+                position: static;
+                margin-top: 10px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Study Tracker</h1>
+            <p class="subtitle">EMRS & KVS Exam Preparation Assistant</p>
+            <div class="designer-badge">Designed by Anurag</div>
+        </header>
+
+        <div class="exam-cards">
+            <div class="exam-card">
+                <div class="exam-header">
+                    <h2 class="exam-title">EMRS Exam</h2>
+                    <div class="days-left" id="emrs-days">Loading...</div>
+                </div>
+                <p>Date: December 13, 2025</p>
+                <div class="countdown" id="emrs-countdown">
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="emrs-days-value">--</div>
+                        <div class="countdown-label">Days</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="emrs-hours-value">--</div>
+                        <div class="countdown-label">Hours</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="emrs-minutes-value">--</div>
+                        <div class="countdown-label">Minutes</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="emrs-seconds-value">--</div>
+                        <div class="countdown-label">Seconds</div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>Overall Progress</span>
+                        <span id="emrs-progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="emrs-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exam-card">
+                <div class="exam-header">
+                    <h2 class="exam-title">KVS Exam</h2>
+                    <div class="days-left" id="kvs-days">Loading...</div>
+                </div>
+                <p>Date: January 18, 2026</p>
+                <div class="countdown" id="kvs-countdown">
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="kvs-days-value">--</div>
+                        <div class="countdown-label">Days</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="kvs-hours-value">--</div>
+                        <div class="countdown-label">Hours</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="kvs-minutes-value">--</div>
+                        <div class="countdown-label">Minutes</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="kvs-seconds-value">--</div>
+                        <div class="countdown-label">Seconds</div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>Overall Progress</span>
+                        <span id="kvs-progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="kvs-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timer-section">
+            <div class="section-title">
+                <i class="fas fa-clock"></i>
+                <h2>Study Session Timer</h2>
+            </div>
+            
+            <div class="subject-selector">
+                <select id="subject-select">
+                    <option value="">Select a subject to study...</option>
+                    <optgroup label="EMRS Subjects">
+                        <option value="teaching-aptitude">Teaching Aptitude</option>
+                        <option value="ict">ICT</option>
+                        <option value="reasoning">Reasoning</option>
+                        <option value="nep">NEP</option>
+                        <option value="case-study">Case Study</option>
+                    </optgroup>
+                    <optgroup label="KVS Subjects">
+                        <option value="maths">Mathematics</option>
+                        <option value="hindi">Hindi Language</option>
+                        <option value="english">English Language</option>
+                        <option value="gs">General Studies</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div class="study-mode-selector">
+                <button class="mode-btn" id="reading-btn">
+                    <i class="fas fa-book"></i> Reading
+                </button>
+                <button class="mode-btn" id="revision-btn">
+                    <i class="fas fa-sync-alt"></i> Revision
+                </button>
+                <button class="mode-btn" id="practice-btn">
+                    <i class="fas fa-pencil-alt"></i> Practice
+                </button>
+            </div>
+            
+            <div class="timer-display" id="timer">00:00:00</div>
+            
+            <div class="timer-controls">
+                <button class="btn btn-primary" id="start-btn">
+                    <i class="fas fa-play"></i> Start
+                </button>
+                <button class="btn btn-primary" id="pause-btn" disabled>
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button class="btn btn-secondary" id="reset-btn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <button class="btn btn-accent" id="save-btn">
+                    <i class="fas fa-save"></i> Save Session
+                </button>
+            </div>
+            
+            <div class="session-info" id="session-info">
+                <i class="fas fa-info-circle"></i>
+                <span>Select a subject and study mode to begin</span>
+            </div>
+        </div>
+
+        <div class="subjects-grid" id="subjects-container">
+            <!-- Subjects will be populated by JavaScript -->
+        </div>
+
+        <div class="notification-section">
+            <div class="notification-header">
+                <i class="fas fa-bell"></i>
+                <h2>Daily Study Notifications</h2>
+            </div>
+            <div class="notification-item">
+                <div>
+                    <h3>Daily Practice Test Reminder</h3>
+                    <p>Scheduled for 6:00 PM every day</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="test-reminder-btn">Enable</button>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div>
+                    <h3>Study Session Reminders</h3>
+                    <p>Get reminded to study at your preferred times</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="study-reminder-btn">Configure</button>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div>
+                    <h3>Exam Countdown Alerts</h3>
+                    <p>Weekly reminders about approaching exams</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="countdown-alert-btn">Activate</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Designed and Developed by <span class="designer">Anurag</span></p>
+            <p>Study Tracker App &copy; 2024 - All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        // Exam data with updated dates
+        const emrsDate = new Date('December 13, 2025 09:00:00').getTime();
+        const kvsDate = new Date('January 18, 2026 09:00:00').getTime();
+
+        // Subject data with zero initial progress
+        const subjects = {
+            // EMRS Subjects
+            "teaching-aptitude": {
+                name: "Teaching Aptitude",
+                exam: "EMRS",
+                reading: { target: 15, completed: 0 },
+                revision: { target: 15, completed: 0 },
+                practice: { target: 20, completed: 0 }
+            },
+            "ict": {
+                name: "ICT",
+                exam: "EMRS",
+                reading: { target: 5, completed: 0 },
+                revision: { target: 5, completed: 0 },
+                practice: { target: 8, completed: 0 }
+            },
+            "reasoning": {
+                name: "Reasoning",
+                exam: "EMRS",
+                reading: { target: 15, completed: 0 },
+                revision: { target: 15, completed: 0 },
+                practice: { target: 20, completed: 0 }
+            },
+            "nep": {
+                name: "NEP",
+                exam: "EMRS",
+                reading: { target: 5, completed: 0 },
+                revision: { target: 5, completed: 0 },
+                practice: { target: 5, completed: 0 }
+            },
+            "case-study": {
+                name: "Case Study",
+                exam: "EMRS",
+                reading: { target: 10, completed: 0 },
+                revision: { target: 8, completed: 0 },
+                practice: { target: 8, completed: 0 }
+            },
+            // KVS Subjects
+            "maths": {
+                name: "Mathematics",
+                exam: "KVS",
+                reading: { target: 15, completed: 0 },
+                revision: { target: 15, completed: 0 },
+                practice: { target: 20, completed: 0 }
+            },
+            "hindi": {
+                name: "Hindi Language",
+                exam: "KVS",
+                reading: { target: 5, completed: 0 },
+                revision: { target: 5, completed: 0 },
+                practice: { target: 5, completed: 0 }
+            },
+            "english": {
+                name: "English Language",
+                exam: "KVS",
+                reading: { target: 15, completed: 0 },
+                revision: { target: 7, completed: 0 },
+                practice: { target: 15, completed: 0 }
+            },
+            "gs": {
+                name: "General Studies",
+                exam: "KVS",
+                reading: { target: 20, completed: 0 },
+                revision: { target: 10, completed: 0 },
+                practice: { target: 15, completed: 0 }
+            }
+        };
+
+        // Timer functionality
+        let timerInterval;
+        let seconds = 0;
+        let isRunning = false;
+        let currentSubject = "";
+        let currentMode = "";
+
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const subjectSelect = document.getElementById('subject-select');
+        const sessionInfo = document.getElementById('session-info');
+        const readingBtn = document.getElementById('reading-btn');
+        const revisionBtn = document.getElementById('revision-btn');
+        const practiceBtn = document.getElementById('practice-btn');
+
+        function updateTimerDisplay() {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            timerDisplay.textContent = 
+                `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function setActiveMode(mode) {
+            // Remove active class from all buttons
+            readingBtn.classList.remove('active');
+            revisionBtn.classList.remove('active');
+            practiceBtn.classList.remove('active');
+            
+            // Add active class to selected button
+            if (mode === 'reading') {
+                readingBtn.classList.add('active');
+                currentMode = 'reading';
+            } else if (mode === 'revision') {
+                revisionBtn.classList.add('active');
+                currentMode = 'revision';
+            } else if (mode === 'practice') {
+                practiceBtn.classList.add('active');
+                currentMode = 'practice';
+            }
+            
+            updateSessionInfo();
+        }
+
+        function updateSessionInfo() {
+            if (currentSubject && currentMode) {
+                sessionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Studying: ${subjects[currentSubject].name} - ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}</span>`;
+            } else if (currentSubject) {
+                sessionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Selected: ${subjects[currentSubject].name}. Please choose a study mode.</span>`;
+            } else {
+                sessionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Select a subject and study mode to begin</span>`;
+            }
+        }
+
+        function startTimer() {
+            if (subjectSelect.value === "") {
+                alert("Please select a subject first!");
+                return;
+            }
+            
+            if (!currentMode) {
+                alert("Please select a study mode (Reading, Revision, or Practice)!");
+                return;
+            }
+            
+            if (!isRunning) {
+                isRunning = true;
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                currentSubject = subjectSelect.value;
+                
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    updateTimerDisplay();
+                }, 1000);
+                
+                updateSessionInfo();
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                isRunning = false;
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                clearInterval(timerInterval);
+                updateSessionInfo();
+            }
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            clearInterval(timerInterval);
+            seconds = 0;
+            updateTimerDisplay();
+            currentSubject = "";
+            currentMode = "";
+            setActiveMode("");
+            updateSessionInfo();
+        }
+
+        function saveSession() {
+            if (currentSubject && currentMode && seconds > 0) {
+                const hoursStudied = seconds / 3600;
+                subjects[currentSubject][currentMode].completed += hoursStudied;
+                
+                alert(`Session saved! You studied ${subjects[currentSubject].name} - ${currentMode} for ${hoursStudied.toFixed(2)} hours.`);
+                resetTimer();
+                renderSubjectCards();
+            } else {
+                alert("No active session to save. Please start a study session first.");
+            }
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        saveBtn.addEventListener('click', saveSession);
+
+        readingBtn.addEventListener('click', () => setActiveMode('reading'));
+        revisionBtn.addEventListener('click', () => setActiveMode('revision'));
+        practiceBtn.addEventListener('click', () => setActiveMode('practice'));
+
+        subjectSelect.addEventListener('change', function() {
+            currentSubject = this.value;
+            updateSessionInfo();
+        });
+
+        // Countdown timers for exams
+        function updateCountdowns() {
+            const now = new Date().getTime();
+            
+            // EMRS Countdown
+            const emrsDistance = emrsDate - now;
+            if (emrsDistance > 0) {
+                const emrsDays = Math.floor(emrsDistance / (1000 * 60 * 60 * 24));
+                const emrsHours = Math.floor((emrsDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const emrsMinutes = Math.floor((emrsDistance % (1000 * 60 * 60)) / (1000 * 60));
+                const emrsSeconds = Math.floor((emrsDistance % (1000 * 60)) / 1000);
+                
+                document.getElementById('emrs-days').textContent = `${emrsDays} days left`;
+                document.getElementById('emrs-days-value').textContent = emrsDays;
+                document.getElementById('emrs-hours-value').textContent = emrsHours;
+                document.getElementById('emrs-minutes-value').textContent = emrsMinutes;
+                document.getElementById('emrs-seconds-value').textContent = emrsSeconds;
+            } else {
+                document.getElementById('emrs-days').textContent = "Exam Completed!";
+                document.getElementById('emrs-days-value').textContent = "0";
+                document.getElementById('emrs-hours-value').textContent = "0";
+                document.getElementById('emrs-minutes-value').textContent = "0";
+                document.getElementById('emrs-seconds-value').textContent = "0";
+            }
+            
+            // KVS Countdown
+            const kvsDistance = kvsDate - now;
+            if (kvsDistance > 0) {
+                const kvsDays = Math.floor(kvsDistance / (1000 * 60 * 60 * 24));
+                const kvsHours = Math.floor((kvsDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const kvsMinutes = Math.floor((kvsDistance % (1000 * 60 * 60)) / (1000 * 60));
+                const kvsSeconds = Math.floor((kvsDistance % (1000 * 60)) / 1000);
+                
+                document.getElementById('kvs-days').textContent = `${kvsDays} days left`;
+                document.getElementById('kvs-days-value').textContent = kvsDays;
+                document.getElementById('kvs-hours-value').textContent = kvsHours;
+                document.getElementById('kvs-minutes-value').textContent = kvsMinutes;
+                document.getElementById('kvs-seconds-value').textContent = kvsSeconds;
+            } else {
+                document.getElementById('kvs-days').textContent = "Exam Completed!";
+                document.getElementById('kvs-days-value').textContent = "0";
+                document.getElementById('kvs-hours-value').textContent = "0";
+                document.getElementById('kvs-minutes-value').textContent = "0";
+                document.getElementById('kvs-seconds-value').textContent = "0";
+            }
+        }
+
+        // Initialize countdowns
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
+
+        // Render subject cards
+        function renderSubjectCards() {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = '';
+            
+            for (const [key, subject] of Object.entries(subjects)) {
+                const totalTarget = subject.reading.target + subject.revision.target + subject.practice.target;
+                const totalCompleted = subject.reading.completed + subject.revision.completed + subject.practice.completed;
+                const progressPercent = Math.min((totalCompleted / totalTarget) * 100, 100);
+                
+                const readingPercent = Math.min((subject.reading.completed / subject.reading.target) * 100, 100);
+                const revisionPercent = Math.min((subject.revision.completed / subject.revision.target) * 100, 100);
+                const practicePercent = Math.min((subject.practice.completed / subject.practice.target) * 100, 100);
+                
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `
+                    <div class="subject-header">
+                        <div class="subject-name">${subject.name}</div>
+                        <div class="subject-hours">${totalCompleted.toFixed(1)}/${totalTarget} hrs</div>
+                    </div>
+                    <div class="subject-progress">
+                        <div class="progress-labels">
+                            <span>Overall Progress</span>
+                            <span>${progressPercent.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                    <div class="mode-progress">
+                        <div class="mode-progress-item reading">
+                            <div>Reading</div>
+                            <div>${subject.reading.completed.toFixed(1)}/${subject.reading.target}hrs</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${readingPercent}%"></div>
+                            </div>
+                        </div>
+                        <div class="mode-progress-item revision">
+                            <div>Revision</div>
+                            <div>${subject.revision.completed.toFixed(1)}/${subject.revision.target}hrs</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${revisionPercent}%"></div>
+                            </div>
+                        </div>
+                        <div class="mode-progress-item practice">
+                            <div>Practice</div>
+                            <div>${subject.practice.completed.toFixed(1)}/${subject.practice.target}hrs</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${practicePercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            }
+        }
+
+        // Notification buttons functionality
+        document.getElementById('test-reminder-btn').addEventListener('click', function() {
+            alert('Daily test reminders enabled! You will receive notifications at 6:00 PM every day.');
+            this.textContent = 'Enabled';
+            this.disabled = true;
+        });
+
+        document.getElementById('study-reminder-btn').addEventListener('click', function() {
+            alert('Study session reminders configured! You will receive reminders at your preferred study times.');
+            this.textContent = 'Configured';
+            this.disabled = true;
+        });
+
+        document.getElementById('countdown-alert-btn').addEventListener('click', function() {
+            alert('Exam countdown alerts activated! You will receive weekly updates about your exam preparation.');
+            this.textContent = 'Activated';
+            this.disabled = true;
+        });
+
+        // Initialize the app
+        renderSubjectCards();
+        updateTimerDisplay();
+
+        // Simulate notification permission request
+        setTimeout(() => {
+            if (Notification.permission === 'default') {
+                if (confirm('Would you like to receive daily study reminders?')) {
+                    Notification.requestPermission();
+                }
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
