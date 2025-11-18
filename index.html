@@ -47,12 +47,115 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-inner {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo-book {
+            width: 30px;
+            height: 40px;
+            background: var(--primary-dark);
+            border-radius: 4px;
+            position: relative;
+            transform: perspective(20px) rotateY(-5deg);
+        }
+
+        .logo-book::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            height: 8px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .logo-book::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 5px;
+            right: 5px;
+            height: 8px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .logo-pages {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 5px,
+                rgba(255,255,255,0.3) 5px,
+                rgba(255,255,255,0.3) 7px
+            );
+            border-radius: 4px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary);
+            border-radius: 50%;
+            filter: blur(5px);
+            opacity: 0.7;
+        }
+
+        .header-text {
+            flex: 1;
+            min-width: 300px;
         }
 
         h1 {
             color: var(--primary-dark);
             margin-bottom: 10px;
             font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .subtitle {
@@ -435,14 +538,35 @@
                 margin-top: 10px;
                 display: inline-block;
             }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-container {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Study Tracker</h1>
-            <p class="subtitle">EMRS & KVS Exam Preparation Assistant</p>
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-inner">
+                        <div class="logo-book">
+                            <div class="logo-pages"></div>
+                        </div>
+                    </div>
+                    <div class="logo-glow"></div>
+                </div>
+                <div class="header-text">
+                    <h1><i class="fas fa-graduation-cap"></i> Study Tracker</h1>
+                    <p class="subtitle">EMRS & KVS Exam Preparation Assistant</p>
+                </div>
+            </div>
             <div class="designer-badge">Designed by Anurag</div>
         </header>
 
