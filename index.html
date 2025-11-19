@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Tracker - EMRS & KVS Exams</title>
+    <title>Study Tracker - EMRS, KVS & BPSC Exams</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --primary-light: #b3e5fc;
             --secondary: #ff9800;
             --accent: #e91e63;
+            --bpsc-color: #9c27b0;
             --text-dark: #37474f;
             --text-light: #78909c;
             --bg-light: #f5fdff;
@@ -180,6 +181,51 @@
             font-weight: bold;
         }
 
+        /* Exam Tabs */
+        .exam-tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .exam-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .exam-tab {
+            padding: 12px 20px;
+            background: var(--white);
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .exam-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .exam-tab.emrs.active {
+            background: var(--primary);
+        }
+
+        .exam-tab.kvs.active {
+            background: var(--secondary);
+        }
+
+        .exam-tab.bpsc.active {
+            background: var(--bpsc-color);
+        }
+
         /* Mobile Optimized Exam Cards */
         .exam-cards {
             display: grid;
@@ -194,6 +240,11 @@
             padding: 20px;
             box-shadow: var(--shadow);
             transition: transform 0.3s ease;
+            display: none;
+        }
+
+        .exam-card.active {
+            display: block;
         }
 
         .exam-card:active {
@@ -212,6 +263,18 @@
             color: var(--primary-dark);
         }
 
+        .exam-card.emrs .exam-title {
+            color: var(--primary-dark);
+        }
+
+        .exam-card.kvs .exam-title {
+            color: var(--secondary);
+        }
+
+        .exam-card.bpsc .exam-title {
+            color: var(--bpsc-color);
+        }
+
         .days-left {
             background: var(--primary);
             color: white;
@@ -219,6 +282,18 @@
             border-radius: 16px;
             font-weight: bold;
             font-size: 0.9rem;
+        }
+
+        .exam-card.emrs .days-left {
+            background: var(--primary);
+        }
+
+        .exam-card.kvs .days-left {
+            background: var(--secondary);
+        }
+
+        .exam-card.bpsc .days-left {
+            background: var(--bpsc-color);
         }
 
         .countdown {
@@ -236,6 +311,18 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary-dark);
+        }
+
+        .exam-card.emrs .countdown-value {
+            color: var(--primary-dark);
+        }
+
+        .exam-card.kvs .countdown-value {
+            color: var(--secondary);
+        }
+
+        .exam-card.bpsc .countdown-value {
+            color: var(--bpsc-color);
         }
 
         .countdown-label {
@@ -266,6 +353,18 @@
             background: var(--primary);
             border-radius: 4px;
             transition: width 0.5s ease;
+        }
+
+        .exam-card.emrs .progress-fill {
+            background: var(--primary);
+        }
+
+        .exam-card.kvs .progress-fill {
+            background: var(--secondary);
+        }
+
+        .exam-card.bpsc .progress-fill {
+            background: var(--bpsc-color);
         }
 
         /* Mobile Timer Section */
@@ -605,9 +704,17 @@
                 position: static;
             }
 
+            .exam-tabs {
+                justify-content: center;
+            }
+
             .exam-cards {
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
                 gap: 20px;
+            }
+
+            .exam-card {
+                display: block;
             }
 
             .study-mode-selector {
@@ -658,6 +765,11 @@
             
             .btn {
                 padding: 12px;
+                font-size: 0.9rem;
+            }
+            
+            .exam-tab {
+                padding: 10px 16px;
                 font-size: 0.9rem;
             }
         }
@@ -713,14 +825,22 @@
                 </div>
                 <div class="header-text">
                     <h1><i class="fas fa-graduation-cap"></i> Study Tracker</h1>
-                    <p class="subtitle">EMRS & KVS Exam Preparation Assistant</p>
+                    <p class="subtitle">EMRS, KVS & BPSC Exam Preparation Assistant</p>
                 </div>
             </div>
             <div class="designer-badge">Designed by Anurag</div>
         </header>
 
+        <!-- Exam Tabs for Mobile -->
+        <div class="exam-tabs">
+            <button class="exam-tab emrs active" data-exam="emrs">EMRS</button>
+            <button class="exam-tab kvs" data-exam="kvs">KVS</button>
+            <button class="exam-tab bpsc" data-exam="bpsc">BPSC</button>
+        </div>
+
         <div class="exam-cards">
-            <div class="exam-card">
+            <!-- EMRS Exam Card -->
+            <div class="exam-card emrs active">
                 <div class="exam-header">
                     <h2 class="exam-title">EMRS Exam</h2>
                     <div class="days-left" id="emrs-days">Loading...</div>
@@ -755,7 +875,8 @@
                 </div>
             </div>
 
-            <div class="exam-card">
+            <!-- KVS Exam Card -->
+            <div class="exam-card kvs">
                 <div class="exam-header">
                     <h2 class="exam-title">KVS Exam</h2>
                     <div class="days-left" id="kvs-days">Loading...</div>
@@ -789,6 +910,42 @@
                     </div>
                 </div>
             </div>
+
+            <!-- BPSC Exam Card -->
+            <div class="exam-card bpsc">
+                <div class="exam-header">
+                    <h2 class="exam-title">BPSC Mains Exam</h2>
+                    <div class="days-left" id="bpsc-days">Loading...</div>
+                </div>
+                <p>Date: April 01, 2026</p>
+                <div class="countdown" id="bpsc-countdown">
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="bpsc-days-value">--</div>
+                        <div class="countdown-label">Days</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="bpsc-hours-value">--</div>
+                        <div class="countdown-label">Hours</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="bpsc-minutes-value">--</div>
+                        <div class="countdown-label">Minutes</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="bpsc-seconds-value">--</div>
+                        <div class="countdown-label">Seconds</div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>Overall Progress</span>
+                        <span id="bpsc-progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="bpsc-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="timer-section">
@@ -812,6 +969,11 @@
                         <option value="hindi">Hindi Language</option>
                         <option value="english">English Language</option>
                         <option value="gs">General Studies</option>
+                    </optgroup>
+                    <optgroup label="BPSC Subjects">
+                        <option value="gs-paper1">GS Paper 1</option>
+                        <option value="gs-paper2">GS Paper 2</option>
+                        <option value="essay">Essay</option>
                     </optgroup>
                 </select>
             </div>
@@ -903,6 +1065,7 @@
         // Exam data with updated dates
         const emrsDate = new Date('December 13, 2025 09:00:00').getTime();
         const kvsDate = new Date('January 18, 2026 09:00:00').getTime();
+        const bpscDate = new Date('April 01, 2026 09:00:00').getTime();
 
         // Subject data with zero initial progress
         const subjects = {
@@ -970,6 +1133,28 @@
                 reading: { target: 20, completed: 0 },
                 revision: { target: 10, completed: 0 },
                 practice: { target: 15, completed: 0 }
+            },
+            // BPSC Subjects
+            "gs-paper1": {
+                name: "GS Paper 1",
+                exam: "BPSC",
+                reading: { target: 50, completed: 0 },
+                revision: { target: 15, completed: 0 },
+                practice: { target: 20, completed: 0 }
+            },
+            "gs-paper2": {
+                name: "GS Paper 2",
+                exam: "BPSC",
+                reading: { target: 50, completed: 0 },
+                revision: { target: 15, completed: 0 },
+                practice: { target: 20, completed: 0 }
+            },
+            "essay": {
+                name: "Essay",
+                exam: "BPSC",
+                reading: { target: 30, completed: 0 },
+                revision: { target: 15, completed: 0 },
+                practice: { target: 20, completed: 0 }
             }
         };
 
@@ -979,6 +1164,7 @@
         let isRunning = false;
         let currentSubject = "";
         let currentMode = "";
+        let currentExam = "emrs";
 
         const timerDisplay = document.getElementById('timer');
         const startBtn = document.getElementById('start-btn');
@@ -990,6 +1176,39 @@
         const readingBtn = document.getElementById('reading-btn');
         const revisionBtn = document.getElementById('revision-btn');
         const practiceBtn = document.getElementById('practice-btn');
+        const examTabs = document.querySelectorAll('.exam-tab');
+        const examCards = document.querySelectorAll('.exam-card');
+
+        // Exam tab functionality
+        examTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const exam = this.getAttribute('data-exam');
+                
+                // Update active tab
+                examTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active exam card
+                examCards.forEach(card => card.classList.remove('active'));
+                document.querySelector(`.exam-card.${exam}`).classList.add('active');
+                
+                currentExam = exam;
+                updateSubjectSelect();
+            });
+        });
+
+        // Update subject select based on current exam
+        function updateSubjectSelect() {
+            const subjectGroups = subjectSelect.querySelectorAll('optgroup');
+            subjectGroups.forEach(group => {
+                group.style.display = 'none';
+            });
+            
+            document.querySelector(`optgroup[label="${currentExam.toUpperCase()} Subjects"]`).style.display = 'block';
+            subjectSelect.value = "";
+            currentSubject = "";
+            updateSessionInfo();
+        }
 
         function updateTimerDisplay() {
             const hrs = Math.floor(seconds / 3600);
@@ -1198,6 +1417,27 @@
                 document.getElementById('kvs-minutes-value').textContent = "0";
                 document.getElementById('kvs-seconds-value').textContent = "0";
             }
+            
+            // BPSC Countdown
+            const bpscDistance = bpscDate - now;
+            if (bpscDistance > 0) {
+                const bpscDays = Math.floor(bpscDistance / (1000 * 60 * 60 * 24));
+                const bpscHours = Math.floor((bpscDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const bpscMinutes = Math.floor((bpscDistance % (1000 * 60 * 60)) / (1000 * 60));
+                const bpscSeconds = Math.floor((bpscDistance % (1000 * 60)) / 1000);
+                
+                document.getElementById('bpsc-days').textContent = `${bpscDays} days left`;
+                document.getElementById('bpsc-days-value').textContent = bpscDays;
+                document.getElementById('bpsc-hours-value').textContent = bpscHours;
+                document.getElementById('bpsc-minutes-value').textContent = bpscMinutes;
+                document.getElementById('bpsc-seconds-value').textContent = bpscSeconds;
+            } else {
+                document.getElementById('bpsc-days').textContent = "Exam Completed!";
+                document.getElementById('bpsc-days-value').textContent = "0";
+                document.getElementById('bpsc-hours-value').textContent = "0";
+                document.getElementById('bpsc-minutes-value').textContent = "0";
+                document.getElementById('bpsc-seconds-value').textContent = "0";
+            }
         }
 
         // Initialize countdowns
@@ -1210,6 +1450,8 @@
             container.innerHTML = '';
             
             for (const [key, subject] of Object.entries(subjects)) {
+                if (subject.exam.toLowerCase() !== currentExam) continue;
+                
                 const totalTarget = subject.reading.target + subject.revision.target + subject.practice.target;
                 const totalCompleted = subject.reading.completed + subject.revision.completed + subject.practice.completed;
                 const progressPercent = Math.min((totalCompleted / totalTarget) * 100, 100);
@@ -1283,6 +1525,7 @@
         });
 
         // Initialize the app
+        updateSubjectSelect();
         renderSubjectCards();
         updateTimerDisplay();
 
